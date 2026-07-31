@@ -12,7 +12,7 @@
     --bg: #f8f7f4;
     --surface-0: #f0efe9;
     --surface-1: #ffffff;
-    --border: rgba(0,0,0,0.1);
+    --border: rgba(0,0,0,0.09);
     --border-strong: rgba(0,0,0,0.18);
     --text-primary: #1a1a18;
     --text-secondary: #5f5e5a;
@@ -28,7 +28,9 @@
     --warning-fill: #d97706;
     --danger-bg: #fff1f2;
     --danger-text: #9f1239;
+    --danger-fill: #e11d48;
     --radius: 8px;
+    --streak-color: #f97316;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -36,7 +38,7 @@
       --bg: #1a1a18;
       --surface-0: #222220;
       --surface-1: #2c2c2a;
-      --border: rgba(255,255,255,0.1);
+      --border: rgba(255,255,255,0.08);
       --border-strong: rgba(255,255,255,0.18);
       --text-primary: #f0efe9;
       --text-secondary: #b4b2a9;
@@ -51,6 +53,7 @@
       --warning-fill: #f59e0b;
       --danger-bg: #2d0a0f;
       --danger-text: #fca5a5;
+      --danger-fill: #fb7185;
     }
   }
 
@@ -63,307 +66,191 @@
     min-height: 100vh;
   }
 
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
-  }
+  .container { max-width: 880px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
-  header {
-    margin-bottom: 2rem;
-  }
+  /* HEADER */
+  header { margin-bottom: 1.75rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  header h1 { font-size: 22px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+  header p { font-size: 12px; color: var(--text-muted); max-width: 480px; }
 
-  header h1 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-  }
-
-  header p {
+  /* STREAK BADGE */
+  .streak-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    border: 1px solid #fed7aa;
+    border-radius: 20px;
+    padding: 6px 14px;
     font-size: 13px;
-    color: var(--text-muted);
-  }
-
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
-
-  @media (max-width: 480px) {
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  .stat {
-    background: var(--surface-1);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: .85rem 1rem;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 4px;
-  }
-
-  .stat-num {
-    font-size: 26px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--streak-color);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
+  @media (prefers-color-scheme: dark) {
+    .streak-badge { background: linear-gradient(135deg, #431407, #7c2d12); border-color: #9a3412; }
+  }
+  .streak-fire { font-size: 18px; }
 
+  /* STATS */
+  .stats-bar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+  @media (max-width: 640px) { .stats-bar { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 380px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+
+  .stat { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; }
+  .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+  .stat-num { font-size: 22px; font-weight: 700; color: var(--text-primary); }
   .stat-num.accent { color: var(--accent); }
   .stat-num.warn   { color: var(--warning-fill); }
   .stat-num.green  { color: var(--success-fill); }
+  .stat-num.easy-c { color: var(--success-fill); }
+  .stat-num.med-c  { color: var(--warning-fill); }
+  .stat-num.hard-c { color: var(--danger-fill); }
 
-  .progress-wrap {
-    margin-bottom: 1.5rem;
-  }
+  /* PROGRESS */
+  .progress-wrap { margin-bottom: 1.5rem; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .progress-bar { background: var(--surface-0); border-radius: 20px; height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #7c3aed); border-radius: 20px; transition: width .4s ease; }
 
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-
-  .progress-bar {
-    background: var(--surface-0);
-    border-radius: 20px;
-    height: 8px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 20px;
-    transition: width .4s ease;
-  }
-
-  .filter-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    font-size: 12px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 0.5px solid var(--border-strong);
-    background: transparent;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-family: inherit;
-    transition: all .15s;
-  }
-
+  /* FILTERS */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .filter-btn { font-size: 12px; padding: 5px 14px; border-radius: 20px; border: 0.5px solid var(--border-strong); background: transparent; cursor: pointer; color: var(--text-secondary); font-family: inherit; transition: all .15s; }
   .filter-btn:hover { background: var(--surface-1); }
+  .filter-btn.active { background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent); }
+  .reset-btn { font-size: 12px; padding: 5px 14px; border-radius: 20px; border: 0.5px solid var(--border-strong); background: transparent; cursor: pointer; color: var(--danger-text); font-family: inherit; margin-left: auto; }
+  .reset-btn:hover { background: var(--danger-bg); }
 
-  .filter-btn.active {
-    background: var(--accent-bg);
-    color: var(--accent-text);
-    border-color: var(--accent);
-  }
-
-  .phase {
-    margin-bottom: 1rem;
-    border: 0.5px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--surface-1);
-  }
-
-  .phase-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .85rem 1.1rem;
-    cursor: pointer;
-    background: var(--surface-0);
-    user-select: none;
-    gap: 12px;
-  }
-
+  /* PHASE */
+  .phase { margin-bottom: 10px; border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface-1); }
+  .phase-header { display: flex; align-items: center; justify-content: space-between; padding: .85rem 1.1rem; cursor: pointer; background: var(--surface-0); user-select: none; gap: 12px; }
   .phase-header:hover { filter: brightness(0.97); }
+  .phase-title { font-size: 14px; font-weight: 500; color: var(--text-primary); flex: 1; }
+  .phase-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .phase-diff-chips { display: flex; gap: 4px; }
+  .phase-chip { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600; }
+  .phase-chip.easy   { background: var(--success-bg); color: var(--success-text); }
+  .phase-chip.medium { background: var(--warning-bg); color: var(--warning-text); }
+  .phase-chip.hard   { background: var(--danger-bg); color: var(--danger-text); }
+  .phase-count { font-size: 12px; color: var(--text-secondary); min-width: 36px; text-align: right; }
+  .phase-mini-bar { width: 60px; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .phase-mini-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .3s; }
+  .chevron { font-size: 16px; color: var(--text-muted); transition: transform .2s; }
+  .chevron.open { transform: rotate(90deg); }
 
-  .phase-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-    flex: 1;
-  }
-
-  .phase-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-
-  .phase-count {
-    font-size: 12px;
-    color: var(--text-secondary);
-    min-width: 36px;
-    text-align: right;
-  }
-
-  .phase-mini-bar {
-    width: 72px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .phase-mini-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 4px;
-    transition: width .3s;
-  }
-
-  .chevron {
-    font-size: 16px;
-    color: var(--text-muted);
-    transition: transform .2s;
-  }
-
-  .chevron.open { transform: rotate(180deg); }
-
+  /* PHASE BODY */
   .phase-body { padding: 0 1rem .5rem; }
+  .section-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; padding: .85rem 0 .35rem; border-bottom: 0.5px solid var(--border); margin-bottom: 2px; display: flex; align-items: center; justify-content: space-between; }
+  .section-diff-chips { display: flex; gap: 3px; }
 
-  .section-title {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    padding: .85rem 0 .35rem;
-    border-bottom: 0.5px solid var(--border);
-    margin-bottom: 2px;
-  }
-
-  .problem-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 0;
-    border-bottom: 0.5px solid var(--border);
-  }
-
+  /* PROBLEM ROW */
+  .problem-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--border); }
   .problem-row:last-child { border-bottom: none; }
+  .problem-main { flex: 1; min-width: 0; }
+  .problem-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-  .status-btn {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 1px solid var(--border-strong);
-    background: transparent;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    flex-shrink: 0;
-    transition: all .15s;
-    color: transparent;
-  }
+  .status-btn { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; transition: all .15s; color: transparent; margin-top: 1px; }
+  .status-btn:hover { transform: scale(1.12); border-color: var(--accent); }
+  .status-btn.solved   { background: var(--success-fill); border-color: var(--success-fill); color: #fff; }
+  .status-btn.revision { background: var(--warning-fill); border-color: var(--warning-fill); color: #fff; }
 
-  .status-btn:hover { transform: scale(1.15); border-color: var(--accent); }
-
-  .status-btn.solved {
-    background: var(--success-fill);
-    border-color: var(--success-fill);
-    color: #fff;
-  }
-
-  .status-btn.revision {
-    background: var(--warning-fill);
-    border-color: var(--warning-fill);
-    color: #fff;
-  }
-
-  .problem-link {
-    font-size: 13px;
-    color: var(--text-primary);
-    text-decoration: none;
-    flex: 1;
-    line-height: 1.4;
-  }
-
+  .problem-link { font-size: 13px; color: var(--text-primary); text-decoration: none; line-height: 1.4; }
   .problem-link:hover { color: var(--accent); text-decoration: underline; }
-
-  .prem-badge {
-    font-size: 10px;
-    color: var(--warning-fill);
-    flex-shrink: 0;
-    title: "LC Premium";
-  }
-
-  .diff {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 20px;
-    flex-shrink: 0;
-    font-weight: 500;
-  }
-
+  .prem-badge { font-size: 10px; color: var(--warning-fill); flex-shrink: 0; }
+  .diff { font-size: 10px; padding: 2px 7px; border-radius: 20px; flex-shrink: 0; font-weight: 600; }
   .diff.easy   { background: var(--success-bg); color: var(--success-text); }
   .diff.medium { background: var(--warning-bg); color: var(--warning-text); }
-  .diff.hard   { background: var(--danger-bg);  color: var(--danger-text);  }
+  .diff.hard   { background: var(--danger-bg);  color: var(--danger-text); }
 
-  .empty-phase {
-    padding: .75rem 1rem;
-    font-size: 13px;
-    color: var(--text-muted);
+  /* TIMESTAMP & NOTES */
+  .problem-meta { display: flex; align-items: center; gap: 10px; margin-top: 3px; flex-wrap: wrap; }
+  .ts-label { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 3px; }
+  .ts-label i { font-size: 11px; }
+
+  .note-toggle { font-size: 10px; color: var(--accent-text); background: none; border: none; cursor: pointer; padding: 0; font-family: inherit; opacity: 0.8; }
+  .note-toggle:hover { opacity: 1; text-decoration: underline; }
+
+  .note-area-wrap { margin-top: 5px; }
+  .note-area { width: 100%; font-size: 12px; font-family: inherit; padding: 6px 10px; border: 0.5px solid var(--border-strong); border-radius: 6px; background: var(--surface-0); color: var(--text-primary); resize: none; min-height: 48px; outline: none; transition: border-color .15s; }
+  .note-area:focus { border-color: var(--accent); }
+  .note-area::placeholder { color: var(--text-muted); }
+
+  /* HEATMAP */
+  .heatmap-section { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; overflow: hidden; }
+  .heatmap-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; flex-wrap: wrap; gap: 8px; }
+  .heatmap-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .heatmap-sub { font-size: 12px; color: var(--text-muted); }
+  .heatmap-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .heatmap-wrap { display: flex; gap: 0; min-width: max-content; }
+  .heatmap-months { display: flex; gap: 0; min-width: max-content; margin-bottom: 4px; padding-left: 0; }
+  .hm-month-label { font-size: 9px; color: var(--text-muted); text-align: left; }
+  .hm-col { display: flex; flex-direction: column; gap: 2px; margin-right: 2px; }
+  .hm-cell { width: 9px; height: 9px; border-radius: 2px; background: var(--surface-0); cursor: default; position: relative; }
+  .hm-cell:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--surface-0); border: 0.5px solid var(--border-strong); color: var(--text-primary); font-size: 11px; padding: 3px 7px; border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 10; }
+  .hm-cell.l0 { background: var(--surface-0); border: 0.5px solid var(--border); }
+  .hm-cell.l1 { background: #bbf7d0; border-color: #86efac; }
+  .hm-cell.l2 { background: #4ade80; border-color: #22c55e; }
+  .hm-cell.l3 { background: #16a34a; border-color: #15803d; }
+  .hm-cell.l4 { background: #166534; border-color: #14532d; }
+  .hm-cell.today-ring { outline: 2px solid var(--streak-color); outline-offset: 1px; }
+  @media (prefers-color-scheme: dark) {
+    .hm-cell.l1 { background: #14532d; border-color: #166534; }
+    .hm-cell.l2 { background: #15803d; border-color: #16a34a; }
+    .hm-cell.l3 { background: #22c55e; border-color: #4ade80; }
+    .hm-cell.l4 { background: #4ade80; border-color: #86efac; }
   }
+  .hm-legend { display: flex; align-items: center; gap: 4px; margin-top: .6rem; justify-content: flex-end; }
+  .hm-legend span { font-size: 11px; color: var(--text-muted); }
+  .hm-legend-cell { width: 12px; height: 12px; border-radius: 2px; }
 
-  .reset-btn {
-    font-size: 12px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    border: 0.5px solid var(--border-strong);
-    background: transparent;
-    cursor: pointer;
-    color: var(--danger-text);
-    font-family: inherit;
-    margin-left: auto;
-    display: block;
-    margin-bottom: 1.25rem;
-  }
-
-  .reset-btn:hover { background: var(--danger-bg); }
+  .empty-phase { padding: .75rem 1rem; font-size: 13px; color: var(--text-muted); }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>DSA Core 180</h1>
-    <p>Click the circle on any problem to cycle: unmarked → solved → needs revision. Progress auto-saves.</p>
+    <div>
+      <h1>DSA Core 180</h1>
+      <p>Click ○ to cycle: unmarked → solved → needs revision. Timestamps and notes auto-save per problem.</p>
+    </div>
+    <div class="streak-badge" id="streak-badge">
+      <span class="streak-fire">🔥</span>
+      <span id="streak-num">0</span> day streak
+    </div>
   </header>
 
   <div class="stats-bar" id="stats"></div>
 
   <div class="progress-wrap">
-    <div class="progress-label">
-      <span>Overall progress</span>
-      <span id="prog-label">0 / 180</span>
-    </div>
+    <div class="progress-label"><span>Overall progress</span><span id="prog-label">0 / 180</span></div>
     <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
   </div>
 
-  <div class="filter-row" id="filters"></div>
-  <button class="reset-btn" onclick="resetAll()">Reset all progress</button>
+  <div class="heatmap-section">
+    <div class="heatmap-header">
+      <div>
+        <div class="heatmap-title" id="hm-submissions">0 submissions in the last year</div>
+        <div class="heatmap-sub">Total active days: <span id="hm-active">0</span> &nbsp;·&nbsp; Max streak: <span id="hm-maxstreak">0</span></div>
+      </div>
+      <div class="hm-legend">
+        <span>Less</span>
+        <div class="hm-legend-cell l0" style="border:0.5px solid var(--border)"></div>
+        <div class="hm-legend-cell l1"></div>
+        <div class="hm-legend-cell l2"></div>
+        <div class="hm-legend-cell l3"></div>
+        <div class="hm-legend-cell l4"></div>
+        <span>More</span>
+      </div>
+    </div>
+    <div class="heatmap-scroll">
+      <div id="hm-month-row" class="heatmap-months"></div>
+      <div id="hm-grid" class="heatmap-wrap"></div>
+    </div>
+  </div>
+
+  <div class="filter-row" id="filters">
+    <button class="reset-btn" onclick="resetAll()">Reset all progress</button>
+  </div>
+
   <div id="phases"></div>
 </div>
 
@@ -630,76 +517,304 @@ const DATA=[
 ];
 
 const TOTAL = 180;
+// state[id] = { status: "none"|"solved"|"revision", ts: ISO string | null, note: string }
 let state = {};
 let activeFilter = "all";
 let openPhases = {};
+let openNotes = {};
 
+// ── persistence ──
 function loadState() {
-  try { const s = localStorage.getItem("dsa180"); if (s) state = JSON.parse(s); } catch(e) {}
+  try { const s = localStorage.getItem("dsa180v2"); if (s) state = JSON.parse(s); } catch(e) {}
 }
-
 function saveState() {
-  try { localStorage.setItem("dsa180", JSON.stringify(state)); } catch(e) {}
+  try { localStorage.setItem("dsa180v2", JSON.stringify(state)); } catch(e) {}
 }
+function getEntry(id) { return state[id] || { status: "none", ts: null, note: "" }; }
 
+// ── actions ──
 function cycle(id) {
-  const cur = state[id] || "none";
-  state[id] = cur === "none" ? "solved" : cur === "solved" ? "revision" : "none";
+  const e = getEntry(id);
+  const next = e.status === "none" ? "solved" : e.status === "solved" ? "revision" : "none";
+  state[id] = { ...e, status: next, ts: next !== "none" ? new Date().toISOString() : null };
   saveState();
   render();
 }
 
+function saveNote(id, val) {
+  const e = getEntry(id);
+  state[id] = { ...e, note: val };
+  saveState();
+}
+
+function toggleNote(id) {
+  openNotes[id] = !openNotes[id];
+  render();
+}
+
 function resetAll() {
-  if (confirm("Reset all progress? This cannot be undone.")) {
-    state = {};
-    saveState();
-    render();
-  }
+  if (confirm("Reset all progress? This cannot be undone.")) { state = {}; saveState(); render(); }
 }
 
+// ── stats helpers ──
 function getStats() {
-  let solved = 0, revision = 0;
-  Object.values(state).forEach(v => { if (v === "solved") solved++; else if (v === "revision") revision++; });
-  return { solved, revision };
+  let solved = 0, revision = 0, easy = 0, medium = 0, hard = 0;
+  const allProbs = DATA.flatMap(ph => ph.sections.flatMap(s => s.problems));
+  allProbs.forEach(p => {
+    const e = getEntry(p.id);
+    if (e.status === "solved") {
+      solved++;
+      if (p.diff === "Easy") easy++;
+      else if (p.diff === "Medium") medium++;
+      else hard++;
+    } else if (e.status === "revision") revision++;
+  });
+  return { solved, revision, easy, medium, hard };
 }
 
-function setFilter(k) { activeFilter = k; render(); }
-function togglePhase(pi) { openPhases[pi] = openPhases[pi] === false ? true : false; render(); }
+// ── streak ──
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function dateStr(iso) { return iso ? iso.slice(0,10) : null; }
 
+function getActiveDays() {
+  const days = new Set();
+  Object.values(state).forEach(e => { if (e.ts) days.add(dateStr(e.ts)); });
+  return days;
+}
+
+function calcStreak() {
+  const days = getActiveDays();
+  if (!days.size) return 0;
+  let streak = 0;
+  const d = new Date(); 
+  // if solved today count it, else check if solved yesterday (grace for late night)
+  for (let i = 0; i < 365; i++) {
+    const s = d.toISOString().slice(0,10);
+    if (days.has(s)) { streak++; d.setDate(d.getDate()-1); }
+    else { if (i === 0) { d.setDate(d.getDate()-1); continue; } break; }
+  }
+  return streak;
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("cal-grid");
+  if (!grid) return;
+  const days = getActiveDays();
+  const today = todayStr();
+  const cells = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const s = d.toISOString().slice(0,10);
+    const isActive = days.has(s);
+    const isToday = s === today;
+    const label = d.toLocaleDateString(undefined, { month:"short", day:"numeric" });
+    cells.push(`<div class="cal-day${isActive?" active":""}${isToday?" today":""}" title="${label}${isActive?" — problems solved":""}"></div>`);
+  }
+  grid.innerHTML = cells.join("");
+}
+
+// ── leetcode-style year heatmap (Aug 1 2026 → Jul 31 2027) ──
+const HM_START = new Date(2026, 7, 1);  // Aug 1, 2026
+const HM_END   = new Date(2027, 6, 31); // Jul 31, 2027
+
+function getCountsByDay() {
+  const counts = {};
+  Object.values(state).forEach(e => {
+    if (e.ts) {
+      const d = dateStr(e.ts);
+      counts[d] = (counts[d] || 0) + 1;
+    }
+  });
+  return counts;
+}
+
+function levelFor(count) {
+  if (!count) return 0;
+  if (count === 1) return 1;
+  if (count === 2) return 2;
+  if (count <= 4) return 3;
+  return 4;
+}
+
+function renderHeatmap() {
+  const monthRow = document.getElementById("hm-month-row");
+  const grid = document.getElementById("hm-grid");
+  if (!monthRow || !grid) return;
+
+  const counts = getCountsByDay();
+  const today = todayStr();
+  let totalSubs = 0, activeDays = 0, maxStreak = 0, curStreak = 0;
+
+  // exact day counts per month, leap-year aware for Feb
+  function daysInMonth(year, month) { // month: 0-11
+    return new Date(year, month + 1, 0).getDate();
+  }
+
+  // walk the streak counter across the FULL date range first, in order,
+  // independent of how months are chunked into columns
+  {
+    let d = new Date(HM_START);
+    while (d <= HM_END) {
+      const s = d.toISOString().slice(0,10);
+      const count = counts[s] || 0;
+      if (count > 0) {
+        totalSubs += count;
+        activeDays++;
+        curStreak++;
+        if (curStreak > maxStreak) maxStreak = curStreak;
+      } else {
+        curStreak = 0;
+      }
+      d.setDate(d.getDate() + 1);
+    }
+  }
+
+  // build list of months from Aug 2026 through Jul 2027
+  const months = [];
+  {
+    let y = HM_START.getFullYear(), m = HM_START.getMonth();
+    for (let i = 0; i < 12; i++) {
+      months.push({ year: y, month: m, numDays: daysInMonth(y, m) });
+      m++;
+      if (m > 11) { m = 0; y++; }
+    }
+  }
+
+  const monthColHtml = [];
+  const gridColHtml = [];
+
+  months.forEach((mo, mi) => {
+    const firstOfMonth = new Date(mo.year, mo.month, 1);
+    const startDow = firstOfMonth.getDay(); // 0=Sun
+    const totalCells = startDow + mo.numDays;
+    const numCols = Math.ceil(totalCells / 7);
+
+    const monthGap = mi > 0 ? "margin-left:6px;" : "";
+
+    // label goes above the first column of this month's block
+    monthColHtml.push(
+      `<div class="hm-col" style="margin-right:2px;${monthGap}"><div class="hm-month-label" style="width:9px;">${firstOfMonth.toLocaleDateString(undefined,{month:"short"})}</div></div>`
+    );
+    for (let c = 1; c < numCols; c++) {
+      monthColHtml.push(`<div class="hm-col" style="margin-right:2px;"><div class="hm-month-label" style="width:9px;"></div></div>`);
+    }
+
+    for (let c = 0; c < numCols; c++) {
+      const cellsHtml = [];
+      for (let r = 0; r < 7; r++) {
+        const cellIndex = c * 7 + r; // position within the padded month grid
+        const dayNum = cellIndex - startDow + 1; // 1-based day of month
+        if (dayNum < 1 || dayNum > mo.numDays) {
+          cellsHtml.push(`<div class="hm-cell" style="visibility:hidden;"></div>`);
+          continue;
+        }
+        const dateObj = new Date(mo.year, mo.month, dayNum);
+        const s = dateObj.toISOString().slice(0,10);
+        const count = counts[s] || 0;
+        const level = levelFor(count);
+        const label = dateObj.toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" });
+        const tip = count > 0 ? `${count} submission${count>1?"s":""} on ${label}` : `No submissions on ${label}`;
+        const isToday = s === today;
+        cellsHtml.push(`<div class="hm-cell l${level}${isToday ? " today-ring" : ""}" data-tip="${tip}"></div>`);
+      }
+      const gap = (c === 0 && mi > 0) ? monthGap : "";
+      gridColHtml.push(`<div class="hm-col" style="${gap}">${cellsHtml.join("")}</div>`);
+    }
+  });
+
+  monthRow.innerHTML = monthColHtml.join("");
+  grid.innerHTML = gridColHtml.join("");
+
+  const subEl = document.getElementById("hm-submissions");
+  const activeEl = document.getElementById("hm-active");
+  const maxStreakEl = document.getElementById("hm-maxstreak");
+  if (subEl) subEl.textContent = `${totalSubs} submission${totalSubs===1?"":"s"} · Aug 2026 – Jul 2027`;
+  if (activeEl) activeEl.textContent = activeDays;
+  if (maxStreakEl) maxStreakEl.textContent = maxStreak;
+}
+
+// ── filter ──
+function setFilter(k) { activeFilter = k; render(); }
+function togglePhase(pi) { openPhases[pi] = openPhases[pi] !== false ? false : true; render(); }
+
+// ── format timestamp ──
+function fmtTs(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, { month:"short", day:"numeric", year:"numeric" }) +
+    " " + d.toLocaleTimeString(undefined, { hour:"2-digit", minute:"2-digit" });
+}
+
+// ── phase diff chips ──
+function phaseChips(allProbs) {
+  const solvedByDiff = { Easy:0, Medium:0, Hard:0 };
+  const totalByDiff  = { Easy:0, Medium:0, Hard:0 };
+  allProbs.forEach(p => {
+    totalByDiff[p.diff] = (totalByDiff[p.diff]||0) + 1;
+    if (getEntry(p.id).status === "solved") solvedByDiff[p.diff] = (solvedByDiff[p.diff]||0) + 1;
+  });
+  return ["Easy","Medium","Hard"].filter(d => totalByDiff[d] > 0).map(d =>
+    `<span class="phase-chip ${d.toLowerCase()}">${solvedByDiff[d]||0}/${totalByDiff[d]} ${d}</span>`
+  ).join("");
+}
+
+// ── section diff chips ──
+function sectionChips(probs) {
+  const solvedByDiff = {}, totalByDiff = {};
+  probs.forEach(p => {
+    totalByDiff[p.diff] = (totalByDiff[p.diff]||0) + 1;
+    if (getEntry(p.id).status === "solved") solvedByDiff[p.diff] = (solvedByDiff[p.diff]||0) + 1;
+  });
+  return ["Easy","Medium","Hard"].filter(d => totalByDiff[d] > 0).map(d =>
+    `<span class="phase-chip ${d.toLowerCase()}">${solvedByDiff[d]||0}/${totalByDiff[d]}</span>`
+  ).join("");
+}
+
+// ── main render ──
 function render() {
-  const { solved, revision } = getStats();
+  const { solved, revision, easy, medium, hard } = getStats();
   const pct = Math.round(solved / TOTAL * 100);
 
   document.getElementById("stats").innerHTML = `
     <div class="stat"><div class="stat-label">Total</div><div class="stat-num">${TOTAL}</div></div>
     <div class="stat"><div class="stat-label">Solved</div><div class="stat-num accent">${solved}</div></div>
-    <div class="stat"><div class="stat-label">Needs revision</div><div class="stat-num warn">${revision}</div></div>
+    <div class="stat"><div class="stat-label">Revision</div><div class="stat-num warn">${revision}</div></div>
     <div class="stat"><div class="stat-label">Progress</div><div class="stat-num green">${pct}%</div></div>
+    <div class="stat"><div class="stat-label">Easy ✓</div><div class="stat-num easy-c">${easy}</div></div>
+    <div class="stat"><div class="stat-label">Medium ✓</div><div class="stat-num med-c">${medium}</div></div>
+    <div class="stat"><div class="stat-label">Hard ✓</div><div class="stat-num hard-c">${hard}</div></div>
   `;
+
+  const streak = calcStreak();
+  document.getElementById("streak-num").textContent = streak;
+  renderCalendar();
+  renderHeatmap();
 
   document.getElementById("prog").style.width = pct + "%";
   document.getElementById("prog-label").textContent = `${solved} / ${TOTAL}`;
 
   const filters = [
-    { k: "all", l: "All problems" },
-    { k: "none", l: "Not started" },
-    { k: "solved", l: "✓ Solved" },
-    { k: "revision", l: "⟳ Needs revision" },
+    { k:"all", l:"All problems" },
+    { k:"none", l:"Not started" },
+    { k:"solved", l:"✓ Solved" },
+    { k:"revision", l:"⟳ Needs revision" },
   ];
-  document.getElementById("filters").innerHTML = filters.map(f =>
-    `<button class="filter-btn${activeFilter === f.k ? " active" : ""}" onclick="setFilter('${f.k}')">${f.l}</button>`
-  ).join("");
+  document.getElementById("filters").innerHTML =
+    filters.map(f =>
+      `<button class="filter-btn${activeFilter===f.k?" active":""}" onclick="setFilter('${f.k}')">${f.l}</button>`
+    ).join("") +
+    `<button class="reset-btn" onclick="resetAll()">Reset all</button>`;
 
   const phasesEl = document.getElementById("phases");
   phasesEl.innerHTML = "";
 
   DATA.forEach((ph, pi) => {
     const allProbs = ph.sections.flatMap(s => s.problems);
-    const phSolved = allProbs.filter(p => state[p.id] === "solved").length;
+    const phSolved = allProbs.filter(p => getEntry(p.id).status === "solved").length;
     const isOpen = openPhases[pi] !== false;
 
     const visible = allProbs.filter(p => {
-      const st = state[p.id] || "none";
+      const st = getEntry(p.id).status;
       return activeFilter === "all" || st === activeFilter;
     });
     if (activeFilter !== "all" && visible.length === 0) return;
@@ -709,11 +824,12 @@ function render() {
     div.className = "phase";
     div.innerHTML = `
       <div class="phase-header" onclick="togglePhase(${pi})">
+        <i class="ti ti-chevron-right chevron${isOpen?" open":""}"></i>
         <span class="phase-title">${ph.phase}</span>
         <div class="phase-meta">
+          <div class="phase-diff-chips">${phaseChips(allProbs)}</div>
           <span class="phase-count">${phSolved}/${allProbs.length}</span>
           <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:${phPct}%"></div></div>
-          <i class="ti ti-chevron-down chevron${isOpen ? " open" : ""}"></i>
         </div>
       </div>
     `;
@@ -721,24 +837,45 @@ function render() {
     if (isOpen) {
       const body = document.createElement("div");
       body.className = "phase-body";
+
       ph.sections.forEach(sec => {
         const probs = sec.problems.filter(p => {
-          const st = state[p.id] || "none";
+          const st = getEntry(p.id).status;
           return activeFilter === "all" || st === activeFilter;
         });
         if (probs.length === 0) return;
+
         const secEl = document.createElement("div");
-        secEl.innerHTML = `<div class="section-title">${sec.title}</div>` +
+        secEl.innerHTML = `
+          <div class="section-title">
+            <span>${sec.title}</span>
+            <div class="section-diff-chips">${sectionChips(sec.problems)}</div>
+          </div>` +
           probs.map(p => {
-            const st = state[p.id] || "none";
+            const e = getEntry(p.id);
+            const st = e.status;
             const icon = st === "solved" ? "✓" : st === "revision" ? "⟳" : "";
             const dc = p.diff.toLowerCase();
             const title = st === "none" ? "Mark as solved" : st === "solved" ? "Mark for revision" : "Clear status";
-            return `<div class="problem-row">
-              <button class="status-btn ${st === "none" ? "" : st}" onclick="cycle(${p.id})" title="${title}">${icon}</button>
-              <a class="problem-link" href="${p.url}" target="_blank" rel="noopener">${p.n}. ${p.name}</a>
-              ${p.prem ? `<span class="prem-badge" title="LC Premium — free alternative available">★</span>` : ""}
-              <span class="diff ${dc}">${p.diff}</span>
+            const hasNote = e.note && e.note.trim();
+            const noteOpen = openNotes[p.id];
+
+            return `<div class="problem-row" id="row-${p.id}">
+              <button class="status-btn ${st==="none"?"":st}" onclick="cycle(${p.id})" title="${title}">${icon}</button>
+              <div class="problem-main">
+                <div class="problem-top">
+                  <a class="problem-link" href="${p.url}" target="_blank" rel="noopener">${p.n}. ${p.name}</a>
+                  ${p.prem ? `<span class="prem-badge" title="LC Premium">★</span>` : ""}
+                  <span class="diff ${dc}">${p.diff}</span>
+                </div>
+                <div class="problem-meta">
+                  ${e.ts ? `<span class="ts-label"><i class="ti ti-clock"></i>${fmtTs(e.ts)}</span>` : ""}
+                  <button class="note-toggle" onclick="toggleNote(${p.id})">${noteOpen ? "▾ hide note" : hasNote ? "▸ note" : "+ add note"}</button>
+                </div>
+                ${noteOpen ? `<div class="note-area-wrap">
+                  <textarea class="note-area" rows="2" placeholder="Approach, time complexity, key insight…" oninput="saveNote(${p.id}, this.value)">${e.note||""}</textarea>
+                </div>` : ""}
+              </div>
             </div>`;
           }).join("");
         body.appendChild(secEl);
@@ -748,6 +885,9 @@ function render() {
     phasesEl.appendChild(div);
   });
 }
+
+// chevron open = rotated 90 deg
+document.head.insertAdjacentHTML("beforeend",`<style>.chevron.open{transform:rotate(90deg)}</style>`);
 
 loadState();
 render();
