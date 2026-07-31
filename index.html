@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Core 180 — Problem Tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f7f4;
+    --surface-0: #f0efe9;
+    --surface-1: #ffffff;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.18);
+    --text-primary: #1a1a18;
+    --text-secondary: #5f5e5a;
+    --text-muted: #9a9890;
+    --accent: #2563eb;
+    --accent-bg: #eff6ff;
+    --accent-text: #1d4ed8;
+    --success-bg: #f0fdf4;
+    --success-text: #166534;
+    --success-fill: #16a34a;
+    --warning-bg: #fffbeb;
+    --warning-text: #92400e;
+    --warning-fill: #d97706;
+    --danger-bg: #fff1f2;
+    --danger-text: #9f1239;
+    --radius: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --surface-0: #222220;
+      --surface-1: #2c2c2a;
+      --border: rgba(255,255,255,0.1);
+      --border-strong: rgba(255,255,255,0.18);
+      --text-primary: #f0efe9;
+      --text-secondary: #b4b2a9;
+      --text-muted: #6b6a66;
+      --accent-bg: #1e3a5f;
+      --accent-text: #93c5fd;
+      --success-bg: #052e16;
+      --success-text: #86efac;
+      --success-fill: #22c55e;
+      --warning-bg: #2d1d04;
+      --warning-text: #fcd34d;
+      --warning-fill: #f59e0b;
+      --danger-bg: #2d0a0f;
+      --danger-text: #fca5a5;
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  header {
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat {
+    background: var(--surface-1);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: .85rem 1rem;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 4px;
+  }
+
+  .stat-num {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .stat-num.accent { color: var(--accent); }
+  .stat-num.warn   { color: var(--warning-fill); }
+  .stat-num.green  { color: var(--success-fill); }
+
+  .progress-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    background: var(--surface-0);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 20px;
+    transition: width .4s ease;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: inherit;
+    transition: all .15s;
+  }
+
+  .filter-btn:hover { background: var(--surface-1); }
+
+  .filter-btn.active {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    border-color: var(--accent);
+  }
+
+  .phase {
+    margin-bottom: 1rem;
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface-1);
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .85rem 1.1rem;
+    cursor: pointer;
+    background: var(--surface-0);
+    user-select: none;
+    gap: 12px;
+  }
+
+  .phase-header:hover { filter: brightness(0.97); }
+
+  .phase-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  .phase-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .phase-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .phase-mini-bar {
+    width: 72px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .phase-mini-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    transition: width .3s;
+  }
+
+  .chevron {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: transform .2s;
+  }
+
+  .chevron.open { transform: rotate(180deg); }
+
+  .phase-body { padding: 0 1rem .5rem; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: .85rem 0 .35rem;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 2px;
+  }
+
+  .problem-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .problem-row:last-child { border-bottom: none; }
+
+  .status-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: all .15s;
+    color: transparent;
+  }
+
+  .status-btn:hover { transform: scale(1.15); border-color: var(--accent); }
+
+  .status-btn.solved {
+    background: var(--success-fill);
+    border-color: var(--success-fill);
+    color: #fff;
+  }
+
+  .status-btn.revision {
+    background: var(--warning-fill);
+    border-color: var(--warning-fill);
+    color: #fff;
+  }
+
+  .problem-link {
+    font-size: 13px;
+    color: var(--text-primary);
+    text-decoration: none;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .problem-link:hover { color: var(--accent); text-decoration: underline; }
+
+  .prem-badge {
+    font-size: 10px;
+    color: var(--warning-fill);
+    flex-shrink: 0;
+    title: "LC Premium";
+  }
+
+  .diff {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .diff.easy   { background: var(--success-bg); color: var(--success-text); }
+  .diff.medium { background: var(--warning-bg); color: var(--warning-text); }
+  .diff.hard   { background: var(--danger-bg);  color: var(--danger-text);  }
+
+  .empty-phase {
+    padding: .75rem 1rem;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .reset-btn {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border-strong);
+    background: transparent;
+    cursor: pointer;
+    color: var(--danger-text);
+    font-family: inherit;
+    margin-left: auto;
+    display: block;
+    margin-bottom: 1.25rem;
+  }
+
+  .reset-btn:hover { background: var(--danger-bg); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>DSA Core 180</h1>
+    <p>Click the circle on any problem to cycle: unmarked → solved → needs revision. Progress auto-saves.</p>
+  </header>
+
+  <div class="stats-bar" id="stats"></div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span>Overall progress</span>
+      <span id="prog-label">0 / 180</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+  </div>
+
+  <div class="filter-row" id="filters"></div>
+  <button class="reset-btn" onclick="resetAll()">Reset all progress</button>
+  <div id="phases"></div>
+</div>
+
+<script>
+const DATA=[
+{phase:"Phase 1 – Arrays & Hashing",sections:[
+{title:"Hashing / Frequency Maps",problems:[
+{id:1,n:"1",name:"Two Sum",url:"https://leetcode.com/problems/two-sum/",diff:"Easy"},
+{id:2,n:"49",name:"Group Anagrams",url:"https://leetcode.com/problems/group-anagrams/",diff:"Medium"},
+{id:3,n:"128",name:"Longest Consecutive Sequence",url:"https://leetcode.com/problems/longest-consecutive-sequence/",diff:"Medium"},
+{id:4,n:"217",name:"Contains Duplicate",url:"https://leetcode.com/problems/contains-duplicate/",diff:"Easy"},
+{id:5,n:"242",name:"Valid Anagram",url:"https://leetcode.com/problems/valid-anagram/",diff:"Easy"},
+{id:6,n:"347",name:"Top K Frequent Elements",url:"https://leetcode.com/problems/top-k-frequent-elements/",diff:"Medium"},
+]},
+{title:"Two Pointers",problems:[
+{id:7,n:"11",name:"Container With Most Water",url:"https://leetcode.com/problems/container-with-most-water/",diff:"Medium"},
+{id:8,n:"15",name:"3Sum",url:"https://leetcode.com/problems/3sum/",diff:"Medium"},
+{id:9,n:"16",name:"3Sum Closest",url:"https://leetcode.com/problems/3sum-closest/",diff:"Medium"},
+{id:10,n:"18",name:"4Sum",url:"https://leetcode.com/problems/4sum/",diff:"Medium"},
+{id:11,n:"42",name:"Trapping Rain Water",url:"https://leetcode.com/problems/trapping-rain-water/",diff:"Hard"},
+{id:12,n:"167",name:"Two Sum II - Input Array Is Sorted",url:"https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",diff:"Medium"},
+]},
+{title:"Sliding Window",problems:[
+{id:13,n:"3",name:"Longest Substring Without Repeating Characters",url:"https://leetcode.com/problems/longest-substring-without-repeating-characters/",diff:"Medium"},
+{id:14,n:"76",name:"Minimum Window Substring",url:"https://leetcode.com/problems/minimum-window-substring/",diff:"Hard"},
+{id:15,n:"209",name:"Minimum Size Subarray Sum",url:"https://leetcode.com/problems/minimum-size-subarray-sum/",diff:"Medium"},
+{id:16,n:"424",name:"Longest Repeating Character Replacement",url:"https://leetcode.com/problems/longest-repeating-character-replacement/",diff:"Medium"},
+{id:17,n:"567",name:"Permutation in String",url:"https://leetcode.com/problems/permutation-in-string/",diff:"Medium"},
+{id:18,n:"904",name:"Fruit Into Baskets",url:"https://leetcode.com/problems/fruit-into-baskets/",diff:"Medium"},
+]},
+{title:"Prefix Sum / Running Sum",problems:[
+{id:19,n:"303",name:"Range Sum Query - Immutable",url:"https://leetcode.com/problems/range-sum-query-immutable/",diff:"Easy"},
+{id:20,n:"560",name:"Subarray Sum Equals K",url:"https://leetcode.com/problems/subarray-sum-equals-k/",diff:"Medium"},
+{id:21,n:"724",name:"Find Pivot Index",url:"https://leetcode.com/problems/find-pivot-index/",diff:"Easy"},
+{id:22,n:"930",name:"Binary Subarrays With Sum",url:"https://leetcode.com/problems/binary-subarrays-with-sum/",diff:"Medium"},
+{id:23,n:"974",name:"Subarray Sums Divisible by K",url:"https://leetcode.com/problems/subarray-sums-divisible-by-k/",diff:"Medium"},
+{id:24,n:"523",name:"Continuous Subarray Sum",url:"https://leetcode.com/problems/continuous-subarray-sum/",diff:"Medium"},
+]},
+]},
+{phase:"Phase 2 – Searching & Greedy",sections:[
+{title:"Difference Array / Range Updates",problems:[
+{id:25,n:"370",name:"Range Addition",url:"https://leetcode.com/problems/range-addition/",diff:"Medium",prem:true},
+{id:26,n:"1094",name:"Car Pooling",url:"https://leetcode.com/problems/car-pooling/",diff:"Medium"},
+{id:27,n:"1109",name:"Corporate Flight Bookings",url:"https://leetcode.com/problems/corporate-flight-bookings/",diff:"Medium"},
+{id:28,n:"1893",name:"Check if All the Integers in a Range Are Covered",url:"https://leetcode.com/problems/check-if-all-the-integers-in-a-range-are-covered/",diff:"Easy"},
+{id:29,n:"1943",name:"Describe the Painting",url:"https://leetcode.com/problems/describe-the-painting/",diff:"Medium"},
+{id:30,n:"2381",name:"Shifting Letters II",url:"https://leetcode.com/problems/shifting-letters-ii/",diff:"Medium"},
+]},
+{title:"Binary Search",problems:[
+{id:31,n:"33",name:"Search in Rotated Sorted Array",url:"https://leetcode.com/problems/search-in-rotated-sorted-array/",diff:"Medium"},
+{id:32,n:"34",name:"Find First and Last Position of Element in Sorted Array",url:"https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",diff:"Medium"},
+{id:33,n:"35",name:"Search Insert Position",url:"https://leetcode.com/problems/search-insert-position/",diff:"Easy"},
+{id:34,n:"153",name:"Find Minimum in Rotated Sorted Array",url:"https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/",diff:"Medium"},
+{id:35,n:"162",name:"Find Peak Element",url:"https://leetcode.com/problems/find-peak-element/",diff:"Medium"},
+{id:36,n:"704",name:"Binary Search",url:"https://leetcode.com/problems/binary-search/",diff:"Easy"},
+]},
+{title:"Binary Search on Answer",problems:[
+{id:37,n:"875",name:"Koko Eating Bananas",url:"https://leetcode.com/problems/koko-eating-bananas/",diff:"Medium"},
+{id:38,n:"1011",name:"Capacity To Ship Packages Within D Days",url:"https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/",diff:"Medium"},
+{id:39,n:"410",name:"Split Array Largest Sum",url:"https://leetcode.com/problems/split-array-largest-sum/",diff:"Hard"},
+{id:40,n:"774",name:"Minimize Max Distance to Gas Station",url:"https://leetcode.com/problems/minimize-max-distance-to-gas-station/",diff:"Hard",prem:true},
+{id:41,n:"1283",name:"Find the Smallest Divisor Given a Threshold",url:"https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/",diff:"Medium"},
+{id:42,n:"1482",name:"Minimum Number of Days to Make m Bouquets",url:"https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/",diff:"Medium"},
+]},
+{title:"Intervals",problems:[
+{id:43,n:"56",name:"Merge Intervals",url:"https://leetcode.com/problems/merge-intervals/",diff:"Medium"},
+{id:44,n:"57",name:"Insert Interval",url:"https://leetcode.com/problems/insert-interval/",diff:"Medium"},
+{id:45,n:"252",name:"Meeting Rooms",url:"https://leetcode.com/problems/meeting-rooms/",diff:"Easy",prem:true},
+{id:46,n:"253",name:"Meeting Rooms II",url:"https://leetcode.com/problems/meeting-rooms-ii/",diff:"Medium",prem:true},
+{id:47,n:"435",name:"Non-overlapping Intervals",url:"https://leetcode.com/problems/non-overlapping-intervals/",diff:"Medium"},
+{id:48,n:"452",name:"Minimum Number of Arrows to Burst Balloons",url:"https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",diff:"Medium"},
+]},
+{title:"Greedy",problems:[
+{id:49,n:"45",name:"Jump Game II",url:"https://leetcode.com/problems/jump-game-ii/",diff:"Medium"},
+{id:50,n:"55",name:"Jump Game",url:"https://leetcode.com/problems/jump-game/",diff:"Medium"},
+{id:51,n:"406",name:"Queue Reconstruction by Height",url:"https://leetcode.com/problems/queue-reconstruction-by-height/",diff:"Medium"},
+{id:52,n:"621",name:"Task Scheduler",url:"https://leetcode.com/problems/task-scheduler/",diff:"Medium"},
+{id:53,n:"763",name:"Partition Labels",url:"https://leetcode.com/problems/partition-labels/",diff:"Medium"},
+{id:54,n:"134",name:"Gas Station",url:"https://leetcode.com/problems/gas-station/",diff:"Medium"},
+]},
+]},
+{phase:"Phase 3 – Linked Lists & Monotonic",sections:[
+{title:"Linked List Manipulation",problems:[
+{id:55,n:"21",name:"Merge Two Sorted Lists",url:"https://leetcode.com/problems/merge-two-sorted-lists/",diff:"Easy"},
+{id:56,n:"23",name:"Merge k Sorted Lists",url:"https://leetcode.com/problems/merge-k-sorted-lists/",diff:"Hard"},
+{id:57,n:"24",name:"Swap Nodes in Pairs",url:"https://leetcode.com/problems/swap-nodes-in-pairs/",diff:"Medium"},
+{id:58,n:"25",name:"Reverse Nodes in k-Group",url:"https://leetcode.com/problems/reverse-nodes-in-k-group/",diff:"Hard"},
+{id:59,n:"92",name:"Reverse Linked List II",url:"https://leetcode.com/problems/reverse-linked-list-ii/",diff:"Medium"},
+{id:60,n:"138",name:"Copy List with Random Pointer",url:"https://leetcode.com/problems/copy-list-with-random-pointer/",diff:"Medium"},
+]},
+{title:"Fast & Slow Pointers",problems:[
+{id:61,n:"141",name:"Linked List Cycle",url:"https://leetcode.com/problems/linked-list-cycle/",diff:"Easy"},
+{id:62,n:"142",name:"Linked List Cycle II",url:"https://leetcode.com/problems/linked-list-cycle-ii/",diff:"Medium"},
+{id:63,n:"19",name:"Remove Nth Node From End of List",url:"https://leetcode.com/problems/remove-nth-node-from-end-of-list/",diff:"Medium"},
+{id:64,n:"876",name:"Middle of the Linked List",url:"https://leetcode.com/problems/middle-of-the-linked-list/",diff:"Easy"},
+{id:65,n:"160",name:"Intersection of Two Linked Lists",url:"https://leetcode.com/problems/intersection-of-two-linked-lists/",diff:"Easy"},
+{id:66,n:"234",name:"Palindrome Linked List",url:"https://leetcode.com/problems/palindrome-linked-list/",diff:"Easy"},
+]},
+{title:"Monotonic Stack",problems:[
+{id:67,n:"739",name:"Daily Temperatures",url:"https://leetcode.com/problems/daily-temperatures/",diff:"Medium"},
+{id:68,n:"496",name:"Next Greater Element I",url:"https://leetcode.com/problems/next-greater-element-i/",diff:"Easy"},
+{id:69,n:"503",name:"Next Greater Element II",url:"https://leetcode.com/problems/next-greater-element-ii/",diff:"Medium"},
+{id:70,n:"84",name:"Largest Rectangle in Histogram",url:"https://leetcode.com/problems/largest-rectangle-in-histogram/",diff:"Hard"},
+{id:71,n:"85",name:"Maximal Rectangle",url:"https://leetcode.com/problems/maximal-rectangle/",diff:"Hard"},
+{id:72,n:"901",name:"Online Stock Span",url:"https://leetcode.com/problems/online-stock-span/",diff:"Medium"},
+]},
+{title:"Monotonic Queue / Deque",problems:[
+{id:73,n:"239",name:"Sliding Window Maximum",url:"https://leetcode.com/problems/sliding-window-maximum/",diff:"Hard"},
+{id:74,n:"862",name:"Shortest Subarray with Sum at Least K",url:"https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/",diff:"Hard"},
+{id:75,n:"1425",name:"Constrained Subsequence Sum",url:"https://leetcode.com/problems/constrained-subsequence-sum/",diff:"Hard"},
+{id:76,n:"1438",name:"Longest Continuous Subarray With Absolute Diff ≤ Limit",url:"https://leetcode.com/problems/longest-continuous-subarray-with-absolute-diff-less-than-or-equal-to-limit/",diff:"Medium"},
+{id:77,n:"1499",name:"Max Value of Equation",url:"https://leetcode.com/problems/max-value-of-equation/",diff:"Hard"},
+{id:78,n:"1696",name:"Jump Game VI",url:"https://leetcode.com/problems/jump-game-vi/",diff:"Medium"},
+]},
+]},
+{phase:"Phase 4 – Heap / Priority Queue",sections:[
+{title:"Heap Problems",problems:[
+{id:79,n:"215",name:"Kth Largest Element in an Array",url:"https://leetcode.com/problems/kth-largest-element-in-an-array/",diff:"Medium"},
+{id:80,n:"347b",name:"Top K Frequent Elements",url:"https://leetcode.com/problems/top-k-frequent-elements/",diff:"Medium"},
+{id:81,n:"692",name:"Top K Frequent Words",url:"https://leetcode.com/problems/top-k-frequent-words/",diff:"Medium"},
+{id:82,n:"703",name:"Kth Largest Element in a Stream",url:"https://leetcode.com/problems/kth-largest-element-in-a-stream/",diff:"Easy"},
+{id:83,n:"973",name:"K Closest Points to Origin",url:"https://leetcode.com/problems/k-closest-points-to-origin/",diff:"Medium"},
+{id:84,n:"1046",name:"Last Stone Weight",url:"https://leetcode.com/problems/last-stone-weight/",diff:"Easy"},
+]},
+]},
+{phase:"Phase 5 – Trees",sections:[
+{title:"DFS",problems:[
+{id:85,n:"104",name:"Maximum Depth of Binary Tree",url:"https://leetcode.com/problems/maximum-depth-of-binary-tree/",diff:"Easy"},
+{id:86,n:"112",name:"Path Sum",url:"https://leetcode.com/problems/path-sum/",diff:"Easy"},
+{id:87,n:"113",name:"Path Sum II",url:"https://leetcode.com/problems/path-sum-ii/",diff:"Medium"},
+{id:88,n:"543",name:"Diameter of Binary Tree",url:"https://leetcode.com/problems/diameter-of-binary-tree/",diff:"Easy"},
+{id:89,n:"124",name:"Binary Tree Maximum Path Sum",url:"https://leetcode.com/problems/binary-tree-maximum-path-sum/",diff:"Hard"},
+{id:90,n:"226",name:"Invert Binary Tree",url:"https://leetcode.com/problems/invert-binary-tree/",diff:"Easy"},
+]},
+{title:"BFS / Level Order",problems:[
+{id:91,n:"102",name:"Binary Tree Level Order Traversal",url:"https://leetcode.com/problems/binary-tree-level-order-traversal/",diff:"Medium"},
+{id:92,n:"103",name:"Binary Tree Zigzag Level Order Traversal",url:"https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",diff:"Medium"},
+{id:93,n:"199",name:"Binary Tree Right Side View",url:"https://leetcode.com/problems/binary-tree-right-side-view/",diff:"Medium"},
+{id:94,n:"515",name:"Find Largest Value in Each Tree Row",url:"https://leetcode.com/problems/find-largest-value-in-each-tree-row/",diff:"Medium"},
+{id:95,n:"637",name:"Average of Levels in Binary Tree",url:"https://leetcode.com/problems/average-of-levels-in-binary-tree/",diff:"Easy"},
+{id:96,n:"116",name:"Populating Next Right Pointers in Each Node",url:"https://leetcode.com/problems/populating-next-right-pointers-in-each-node/",diff:"Medium"},
+]},
+{title:"Binary Search Tree",problems:[
+{id:97,n:"98",name:"Validate Binary Search Tree",url:"https://leetcode.com/problems/validate-binary-search-tree/",diff:"Medium"},
+{id:98,n:"99",name:"Recover Binary Search Tree",url:"https://leetcode.com/problems/recover-binary-search-tree/",diff:"Medium"},
+{id:99,n:"230",name:"Kth Smallest Element in a BST",url:"https://leetcode.com/problems/kth-smallest-element-in-a-bst/",diff:"Medium"},
+{id:100,n:"235",name:"Lowest Common Ancestor of BST",url:"https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",diff:"Medium"},
+{id:101,n:"450",name:"Delete Node in a BST",url:"https://leetcode.com/problems/delete-node-in-a-bst/",diff:"Medium"},
+{id:102,n:"700",name:"Search in a Binary Search Tree",url:"https://leetcode.com/problems/search-in-a-binary-search-tree/",diff:"Easy"},
+]},
+]},
+{phase:"Phase 6 – Backtracking",sections:[
+{title:"Basics",problems:[
+{id:103,n:"46",name:"Permutations",url:"https://leetcode.com/problems/permutations/",diff:"Medium"},
+{id:104,n:"47",name:"Permutations II",url:"https://leetcode.com/problems/permutations-ii/",diff:"Medium"},
+{id:105,n:"77",name:"Combinations",url:"https://leetcode.com/problems/combinations/",diff:"Medium"},
+{id:106,n:"78",name:"Subsets",url:"https://leetcode.com/problems/subsets/",diff:"Medium"},
+{id:107,n:"90",name:"Subsets II",url:"https://leetcode.com/problems/subsets-ii/",diff:"Medium"},
+{id:108,n:"39",name:"Combination Sum",url:"https://leetcode.com/problems/combination-sum/",diff:"Medium"},
+]},
+{title:"Advanced / Constraints",problems:[
+{id:109,n:"40",name:"Combination Sum II",url:"https://leetcode.com/problems/combination-sum-ii/",diff:"Medium"},
+{id:110,n:"17",name:"Letter Combinations of a Phone Number",url:"https://leetcode.com/problems/letter-combinations-of-a-phone-number/",diff:"Medium"},
+{id:111,n:"79",name:"Word Search",url:"https://leetcode.com/problems/word-search/",diff:"Medium"},
+{id:112,n:"131",name:"Palindrome Partitioning",url:"https://leetcode.com/problems/palindrome-partitioning/",diff:"Medium"},
+{id:113,n:"51",name:"N-Queens",url:"https://leetcode.com/problems/n-queens/",diff:"Hard"},
+{id:114,n:"52",name:"N-Queens II",url:"https://leetcode.com/problems/n-queens-ii/",diff:"Hard"},
+]},
+]},
+{phase:"Phase 7 – Graphs",sections:[
+{title:"Graph BFS / DFS",problems:[
+{id:115,n:"200",name:"Number of Islands",url:"https://leetcode.com/problems/number-of-islands/",diff:"Medium"},
+{id:116,n:"695",name:"Max Area of Island",url:"https://leetcode.com/problems/max-area-of-island/",diff:"Medium"},
+{id:117,n:"733",name:"Flood Fill",url:"https://leetcode.com/problems/flood-fill/",diff:"Easy"},
+{id:118,n:"994",name:"Rotting Oranges",url:"https://leetcode.com/problems/rotting-oranges/",diff:"Medium"},
+{id:119,n:"1091",name:"Shortest Path in Binary Matrix",url:"https://leetcode.com/problems/shortest-path-in-binary-matrix/",diff:"Medium"},
+{id:120,n:"1254",name:"Number of Closed Islands",url:"https://leetcode.com/problems/number-of-closed-islands/",diff:"Medium"},
+]},
+{title:"Topological Sort",problems:[
+{id:121,n:"207",name:"Course Schedule",url:"https://leetcode.com/problems/course-schedule/",diff:"Medium"},
+{id:122,n:"210",name:"Course Schedule II",url:"https://leetcode.com/problems/course-schedule-ii/",diff:"Medium"},
+{id:123,n:"802",name:"Find Eventual Safe States",url:"https://leetcode.com/problems/find-eventual-safe-states/",diff:"Medium"},
+{id:124,n:"1462",name:"Course Schedule IV",url:"https://leetcode.com/problems/course-schedule-iv/",diff:"Medium"},
+{id:125,n:"1203",name:"Sort Items by Groups Respecting Dependencies",url:"https://leetcode.com/problems/sort-items-by-groups-respecting-dependencies/",diff:"Hard"},
+{id:126,n:"2115",name:"Find All Possible Recipes from Given Supplies",url:"https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/",diff:"Medium"},
+]},
+{title:"Union Find (DSU)",problems:[
+{id:127,n:"547",name:"Number of Provinces",url:"https://leetcode.com/problems/number-of-provinces/",diff:"Medium"},
+{id:128,n:"684",name:"Redundant Connection",url:"https://leetcode.com/problems/redundant-connection/",diff:"Medium"},
+{id:129,n:"1319",name:"Number of Operations to Make Network Connected",url:"https://leetcode.com/problems/number-of-operations-to-make-network-connected/",diff:"Medium"},
+{id:130,n:"1579",name:"Remove Max Number of Edges to Keep Graph Fully Traversable",url:"https://leetcode.com/problems/remove-max-number-of-edges-to-keep-graph-fully-traversable/",diff:"Hard"},
+{id:131,n:"990",name:"Satisfiability of Equality Equations",url:"https://leetcode.com/problems/satisfiability-of-equality-equations/",diff:"Medium"},
+{id:132,n:"1202",name:"Smallest String With Swaps",url:"https://leetcode.com/problems/smallest-string-with-swaps/",diff:"Medium"},
+]},
+{title:"Shortest Path",problems:[
+{id:133,n:"743",name:"Network Delay Time",url:"https://leetcode.com/problems/network-delay-time/",diff:"Medium"},
+{id:134,n:"787",name:"Cheapest Flights Within K Stops",url:"https://leetcode.com/problems/cheapest-flights-within-k-stops/",diff:"Medium"},
+{id:135,n:"1514",name:"Path with Maximum Probability",url:"https://leetcode.com/problems/path-with-maximum-probability/",diff:"Medium"},
+{id:136,n:"1631",name:"Path With Minimum Effort",url:"https://leetcode.com/problems/path-with-minimum-effort/",diff:"Medium"},
+{id:137,n:"1334",name:"Find the City With the Smallest Number of Neighbors at a Threshold Distance",url:"https://leetcode.com/problems/find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance/",diff:"Medium"},
+{id:138,n:"1976",name:"Number of Ways to Arrive at Destination",url:"https://leetcode.com/problems/number-of-ways-to-arrive-at-destination/",diff:"Medium"},
+]},
+{title:"Minimum Spanning Tree",problems:[
+{id:139,n:"1584",name:"Min Cost to Connect All Points",url:"https://leetcode.com/problems/min-cost-to-connect-all-points/",diff:"Medium"},
+{id:140,n:"1135",name:"Connecting Cities With Minimum Cost",url:"https://leetcode.com/problems/connecting-cities-with-minimum-cost/",diff:"Medium",prem:true},
+{id:141,n:"1168",name:"Optimize Water Distribution in a Village",url:"https://leetcode.com/problems/optimize-water-distribution-in-a-village/",diff:"Hard",prem:true},
+{id:142,n:"1489",name:"Find Critical and Pseudo-Critical Edges in MST",url:"https://leetcode.com/problems/find-critical-and-pseudo-critical-edges-in-minimum-spanning-tree/",diff:"Hard"},
+{id:143,n:"778",name:"Swim in Rising Water",url:"https://leetcode.com/problems/swim-in-rising-water/",diff:"Hard"},
+{id:144,n:"1102",name:"Path With Maximum Minimum Value",url:"https://leetcode.com/problems/path-with-maximum-minimum-value/",diff:"Medium",prem:true},
+]},
+]},
+{phase:"Phase 8 – Trie & Bit Manipulation",sections:[
+{title:"Trie",problems:[
+{id:145,n:"208",name:"Implement Trie (Prefix Tree)",url:"https://leetcode.com/problems/implement-trie-prefix-tree/",diff:"Medium"},
+{id:146,n:"211",name:"Design Add and Search Words Data Structure",url:"https://leetcode.com/problems/design-add-and-search-words-data-structure/",diff:"Medium"},
+{id:147,n:"212",name:"Word Search II",url:"https://leetcode.com/problems/word-search-ii/",diff:"Hard"},
+{id:148,n:"648",name:"Replace Words",url:"https://leetcode.com/problems/replace-words/",diff:"Medium"},
+{id:149,n:"677",name:"Map Sum Pairs",url:"https://leetcode.com/problems/map-sum-pairs/",diff:"Medium"},
+{id:150,n:"1268",name:"Search Suggestions System",url:"https://leetcode.com/problems/search-suggestions-system/",diff:"Medium"},
+]},
+{title:"Bit Manipulation",problems:[
+{id:151,n:"136",name:"Single Number",url:"https://leetcode.com/problems/single-number/",diff:"Easy"},
+{id:152,n:"137",name:"Single Number II",url:"https://leetcode.com/problems/single-number-ii/",diff:"Medium"},
+{id:153,n:"191",name:"Number of 1 Bits",url:"https://leetcode.com/problems/number-of-1-bits/",diff:"Easy"},
+{id:154,n:"338",name:"Counting Bits",url:"https://leetcode.com/problems/counting-bits/",diff:"Easy"},
+{id:155,n:"268",name:"Missing Number",url:"https://leetcode.com/problems/missing-number/",diff:"Easy"},
+{id:156,n:"190",name:"Reverse Bits",url:"https://leetcode.com/problems/reverse-bits/",diff:"Easy"},
+]},
+]},
+{phase:"Phase 9 – Dynamic Programming",sections:[
+{title:"1D DP",problems:[
+{id:157,n:"70",name:"Climbing Stairs",url:"https://leetcode.com/problems/climbing-stairs/",diff:"Easy"},
+{id:158,n:"198",name:"House Robber",url:"https://leetcode.com/problems/house-robber/",diff:"Medium"},
+{id:159,n:"213",name:"House Robber II",url:"https://leetcode.com/problems/house-robber-ii/",diff:"Medium"},
+{id:160,n:"322",name:"Coin Change",url:"https://leetcode.com/problems/coin-change/",diff:"Medium"},
+{id:161,n:"279",name:"Perfect Squares",url:"https://leetcode.com/problems/perfect-squares/",diff:"Medium"},
+{id:162,n:"300",name:"Longest Increasing Subsequence",url:"https://leetcode.com/problems/longest-increasing-subsequence/",diff:"Medium"},
+]},
+{title:"Knapsack / Subset DP",problems:[
+{id:163,n:"416",name:"Partition Equal Subset Sum",url:"https://leetcode.com/problems/partition-equal-subset-sum/",diff:"Medium"},
+{id:164,n:"494",name:"Target Sum",url:"https://leetcode.com/problems/target-sum/",diff:"Medium"},
+{id:165,n:"518",name:"Coin Change II",url:"https://leetcode.com/problems/coin-change-ii/",diff:"Medium"},
+{id:166,n:"474",name:"Ones and Zeroes",url:"https://leetcode.com/problems/ones-and-zeroes/",diff:"Medium"},
+{id:167,n:"1049",name:"Last Stone Weight II",url:"https://leetcode.com/problems/last-stone-weight-ii/",diff:"Medium"},
+{id:168,n:"879",name:"Profitable Schemes",url:"https://leetcode.com/problems/profitable-schemes/",diff:"Hard"},
+]},
+{title:"Grid DP",problems:[
+{id:169,n:"62",name:"Unique Paths",url:"https://leetcode.com/problems/unique-paths/",diff:"Medium"},
+{id:170,n:"63",name:"Unique Paths II",url:"https://leetcode.com/problems/unique-paths-ii/",diff:"Medium"},
+{id:171,n:"64",name:"Minimum Path Sum",url:"https://leetcode.com/problems/minimum-path-sum/",diff:"Medium"},
+{id:172,n:"221",name:"Maximal Square",url:"https://leetcode.com/problems/maximal-square/",diff:"Medium"},
+{id:173,n:"931",name:"Minimum Falling Path Sum",url:"https://leetcode.com/problems/minimum-falling-path-sum/",diff:"Medium"},
+{id:174,n:"120",name:"Triangle",url:"https://leetcode.com/problems/triangle/",diff:"Medium"},
+]},
+{title:"String / Sequence DP",problems:[
+{id:175,n:"1143",name:"Longest Common Subsequence",url:"https://leetcode.com/problems/longest-common-subsequence/",diff:"Medium"},
+{id:176,n:"72",name:"Edit Distance",url:"https://leetcode.com/problems/edit-distance/",diff:"Medium"},
+{id:177,n:"115",name:"Distinct Subsequences",url:"https://leetcode.com/problems/distinct-subsequences/",diff:"Hard"},
+{id:178,n:"583",name:"Delete Operation for Two Strings",url:"https://leetcode.com/problems/delete-operation-for-two-strings/",diff:"Medium"},
+{id:179,n:"97",name:"Interleaving String",url:"https://leetcode.com/problems/interleaving-string/",diff:"Medium"},
+{id:180,n:"1312",name:"Minimum Insertion Steps to Make a String Palindrome",url:"https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/",diff:"Hard"},
+]},
+]},
+];
+
+const TOTAL = 180;
+let state = {};
+let activeFilter = "all";
+let openPhases = {};
+
+function loadState() {
+  try { const s = localStorage.getItem("dsa180"); if (s) state = JSON.parse(s); } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem("dsa180", JSON.stringify(state)); } catch(e) {}
+}
+
+function cycle(id) {
+  const cur = state[id] || "none";
+  state[id] = cur === "none" ? "solved" : cur === "solved" ? "revision" : "none";
+  saveState();
+  render();
+}
+
+function resetAll() {
+  if (confirm("Reset all progress? This cannot be undone.")) {
+    state = {};
+    saveState();
+    render();
+  }
+}
+
+function getStats() {
+  let solved = 0, revision = 0;
+  Object.values(state).forEach(v => { if (v === "solved") solved++; else if (v === "revision") revision++; });
+  return { solved, revision };
+}
+
+function setFilter(k) { activeFilter = k; render(); }
+function togglePhase(pi) { openPhases[pi] = openPhases[pi] === false ? true : false; render(); }
+
+function render() {
+  const { solved, revision } = getStats();
+  const pct = Math.round(solved / TOTAL * 100);
+
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><div class="stat-label">Total</div><div class="stat-num">${TOTAL}</div></div>
+    <div class="stat"><div class="stat-label">Solved</div><div class="stat-num accent">${solved}</div></div>
+    <div class="stat"><div class="stat-label">Needs revision</div><div class="stat-num warn">${revision}</div></div>
+    <div class="stat"><div class="stat-label">Progress</div><div class="stat-num green">${pct}%</div></div>
+  `;
+
+  document.getElementById("prog").style.width = pct + "%";
+  document.getElementById("prog-label").textContent = `${solved} / ${TOTAL}`;
+
+  const filters = [
+    { k: "all", l: "All problems" },
+    { k: "none", l: "Not started" },
+    { k: "solved", l: "✓ Solved" },
+    { k: "revision", l: "⟳ Needs revision" },
+  ];
+  document.getElementById("filters").innerHTML = filters.map(f =>
+    `<button class="filter-btn${activeFilter === f.k ? " active" : ""}" onclick="setFilter('${f.k}')">${f.l}</button>`
+  ).join("");
+
+  const phasesEl = document.getElementById("phases");
+  phasesEl.innerHTML = "";
+
+  DATA.forEach((ph, pi) => {
+    const allProbs = ph.sections.flatMap(s => s.problems);
+    const phSolved = allProbs.filter(p => state[p.id] === "solved").length;
+    const isOpen = openPhases[pi] !== false;
+
+    const visible = allProbs.filter(p => {
+      const st = state[p.id] || "none";
+      return activeFilter === "all" || st === activeFilter;
+    });
+    if (activeFilter !== "all" && visible.length === 0) return;
+
+    const phPct = Math.round(phSolved / allProbs.length * 100);
+    const div = document.createElement("div");
+    div.className = "phase";
+    div.innerHTML = `
+      <div class="phase-header" onclick="togglePhase(${pi})">
+        <span class="phase-title">${ph.phase}</span>
+        <div class="phase-meta">
+          <span class="phase-count">${phSolved}/${allProbs.length}</span>
+          <div class="phase-mini-bar"><div class="phase-mini-fill" style="width:${phPct}%"></div></div>
+          <i class="ti ti-chevron-down chevron${isOpen ? " open" : ""}"></i>
+        </div>
+      </div>
+    `;
+
+    if (isOpen) {
+      const body = document.createElement("div");
+      body.className = "phase-body";
+      ph.sections.forEach(sec => {
+        const probs = sec.problems.filter(p => {
+          const st = state[p.id] || "none";
+          return activeFilter === "all" || st === activeFilter;
+        });
+        if (probs.length === 0) return;
+        const secEl = document.createElement("div");
+        secEl.innerHTML = `<div class="section-title">${sec.title}</div>` +
+          probs.map(p => {
+            const st = state[p.id] || "none";
+            const icon = st === "solved" ? "✓" : st === "revision" ? "⟳" : "";
+            const dc = p.diff.toLowerCase();
+            const title = st === "none" ? "Mark as solved" : st === "solved" ? "Mark for revision" : "Clear status";
+            return `<div class="problem-row">
+              <button class="status-btn ${st === "none" ? "" : st}" onclick="cycle(${p.id})" title="${title}">${icon}</button>
+              <a class="problem-link" href="${p.url}" target="_blank" rel="noopener">${p.n}. ${p.name}</a>
+              ${p.prem ? `<span class="prem-badge" title="LC Premium — free alternative available">★</span>` : ""}
+              <span class="diff ${dc}">${p.diff}</span>
+            </div>`;
+          }).join("");
+        body.appendChild(secEl);
+      });
+      div.appendChild(body);
+    }
+    phasesEl.appendChild(div);
+  });
+}
+
+loadState();
+render();
+</script>
+</body>
+</html>
